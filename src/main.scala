@@ -69,6 +69,7 @@ object main {
 
     // 表示用
     for (name <- allNameSeq) {
+      // バス停名の（福井県）や〔東福バス〕などを削除する
       // （も）も含まない0文字以上の文字列を（）で囲んだ文字列にマッチする正規表現
       // 〔〕も同様の処理
       val rename = name.replaceFirst("（[^（）]*）$", "").replaceFirst("〔[^〔〕]*〕$", "")
