@@ -80,22 +80,43 @@ object main {
       checkStrEnd(i, timeSeqSeq)
     }
 
+    // 着発表示に合わせてバス停名を調整する
+    val allNameSeq2 = for (i <- 0 to allStrEndSeq.size - 1) yield {
+      if (allStrEndSeq(i)._2 != "") {
+        (allNameSeq(i), allNameSeq(i))
+      } else {
+        (allNameSeq(i), "")
+      }
+    }
+
     // 表示用
-    for (name <- allNameSeq) {
+    for (name <- allNameSeq2) {
       // バス停名の（福井県）や〔東福バス〕などを削除する
       // （も）も含まない0文字以上の文字列を（）で囲んだ文字列にマッチする正規表現
       // 〔〕も同様の処理
-      val rename = name.replaceFirst("（[^（）]*）$", "").replaceFirst("〔[^〔〕]*〕$", "")
-      print(rename + ",")
+      val rename = name._1.replaceFirst("（[^（）]*）$", "").replaceFirst("〔[^〔〕]*〕$", "")
+      if (name._2 != "") {
+        print(rename + "," + rename + ",")
+      } else {
+        print(rename + ",")
+      }
     }
     println()
     for (strEnd <- allStrEndSeq) {
-      print(strEnd + ",")
+      if (strEnd._2 != "") {
+        print(strEnd._1 + "," + strEnd._2 + ",")
+      } else {
+        print(strEnd._1 + ",")
+      }
     }
     println()
     for (timeSeq <- timeSeqSeq) {
       for (time <- timeSeq) {
-        print(time + ",")
+        if (time._2 != "") {
+          print(time._1 + "," + time._2 + ",")
+        } else {
+          print(time._1 + ",")
+        }
       }
       println()
     }
