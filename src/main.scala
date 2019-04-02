@@ -81,7 +81,7 @@ object main {
     }
 
     // 着発表示に合わせてバス停名を調整する
-    val allNameSeq2 = for (i <- 0 to allStrEndSeq.size - 1) yield {
+    val allNameTupleSeq2 = for (i <- 0 to allStrEndSeq.size - 1) yield {
       if (allStrEndSeq(i)._2 != "") {
         (allNameSeq(i), allNameSeq(i))
       } else {
@@ -90,12 +90,12 @@ object main {
     }
 
     // 表示用
-    for (name <- allNameSeq2) {
+    for (nameTuple <- allNameTupleSeq2) {
       // バス停名の（福井県）や〔東福バス〕などを削除する
       // （も）も含まない0文字以上の文字列を（）で囲んだ文字列にマッチする正規表現
       // 〔〕も同様の処理
-      val rename = name._1.replaceFirst("（[^（）]*）$", "").replaceFirst("〔[^〔〕]*〕$", "")
-      if (name._2 != "") {
+      val rename = nameTuple._1.replaceFirst("（[^（）]*）$", "").replaceFirst("〔[^〔〕]*〕$", "")
+      if (nameTuple._2 != "") {
         print(rename + "," + rename + ",")
       } else {
         print(rename + ",")
@@ -110,12 +110,12 @@ object main {
       }
     }
     println()
-    for (timeSeq <- timeSeqSeq) {
-      for (time <- timeSeq) {
-        if (time._2 != "") {
-          print(time._1 + "," + time._2 + ",")
+    for (timeTupleSeq <- timeSeqSeq) {
+      for (timeTuple <- timeTupleSeq) {
+        if (timeTuple._2 != "") {
+          print(timeTuple._1 + "," + timeTuple._2 + ",")
         } else {
-          print(time._1 + ",")
+          print(timeTuple._1 + ",")
         }
       }
       println()
