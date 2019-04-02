@@ -67,6 +67,11 @@ object main {
       timeSeq
     }
 
+    // 最後のみ着になるSeqを作る
+    val allStrEndSeq = for (name <- allNameSeq) yield {
+      if (name == allNameSeq.last) { "着" } else { "発" }
+    }
+
     // 表示用
     for (name <- allNameSeq) {
       // バス停名の（福井県）や〔東福バス〕などを削除する
@@ -74,6 +79,10 @@ object main {
       // 〔〕も同様の処理
       val rename = name.replaceFirst("（[^（）]*）$", "").replaceFirst("〔[^〔〕]*〕$", "")
       print(rename + ",")
+    }
+    println()
+    for (strEnd <- allStrEndSeq) {
+      print(strEnd + ",")
     }
     println()
     for (timeSeq <- timeSeqSeq) {
