@@ -59,17 +59,25 @@ object main {
       val timeSeq = for (name <- allNameSeq) yield {
         if (checkNameSeq.contains(name)) {
           val point = checkNameSeq.indexOf(name)
-          nameTimeSeq(point)._2
+          val time = nameTimeSeq(point)._2
+          // 着発の両方が設定されているバス停があれば，そのバス停の時刻を2つにわける
+          // 片方のみ設定されている場合は，すべて先頭に時刻を入れる
+          if (time.contains(" ")) {
+            val tmp = time.split(" ")
+            (tmp(0), tmp(1))
+          } else {
+            (time, "")
+          }
         } else {
-          ""
+          ("", "")
         }
       }
       timeSeq
     }
 
-    // 最後のみ着になるSeqを作る
-    val allStrEndSeq = for (name <- allNameSeq) yield {
-      if (name == allNameSeq.last) { "着" } else { "発" }
+    // 着発表示を作る
+    val allStrEndSeq = for (i <- 0 to timeSeqSeq(0).size - 1) yield {
+      checkStrEnd(i, timeSeqSeq)
     }
 
     // 表示用
@@ -156,6 +164,18 @@ object main {
       createNameSeqOne(newNameSeq, checkPoint + 1, checkNameSeq)
     } else {
       newNameSeq
+    }
+  }
+
+  // i番目のバス停が着発なのか発だけなのか調べる
+  // 着発の両方が設定されているバス停は("着", "発")を返す
+  // 最後のバス停は("着", "")を返す
+  // それ以外のバス停は("発", "")を返す
+  def checkStrEnd(i: Int, timeSeqSeq: Seq[Seq[(String, String)]]): (String, String) = {
+    // 検索用に2番目に時刻が入っていればtrue，それ以外はfalseが入ったSeqを作っておく
+    val checkStrSeq = for (timeSeq <- timeSeqSeq) yield { if (timeSeq(i)._2 != "") { true } else { false } }
+    if (checkStrSeq.contains(true)) { ("着", "発") } else {
+      if (i == timeSeqSeq(0).size - 1) { ("着", "") } else { ("発", "") }
     }
   }
 
