@@ -9,7 +9,7 @@ import scala.io._
 object main {
   def main(args: Array[String]) {
     //val uri = "https://www.navitime.co.jp/diagram/bus/00257161/00050458/0/";
-    val uri = "https://www.navitime.co.jp/diagram/bus/00268556/00051670/0/";
+    val uri = "https://www.navitime.co.jp/diagram/bus/00136821/00031734/0/";
     //val uri = https://www.navitime.co.jp/diagram/bus/00018776/00005312/0/
     //val outputPath = Path("./" + uri.split("/")(5) + ".csv")
     //outputPath.write("")
@@ -18,7 +18,7 @@ object main {
 
     // TODO: 平日，休日や上り，下りをどうするか考える
     // 平日は0，土曜は1，日曜は2
-    val date = 2
+    val date = 1
     // 順方向は0，逆方面は1
     val dir = 0
     val divEleStr = "d_" + dir.toString + "_" + date.toString
