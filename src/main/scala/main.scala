@@ -6,11 +6,18 @@ import collection.JavaConversions._
 import scala.io._
 //import scalax.file.Path
 
+/**
+ * arg0: URL
+ * arg1: 平日は0，土曜は1，日曜は2
+ * arg2: 順方向は0，逆方面は1
+ * sbt run https://www.navitime.co.jp/diagram/bus/00136821/00031734/0/ 1 0
+**/
 object main {
   def main(args: Array[String]) {
     //val uri = "https://www.navitime.co.jp/diagram/bus/00257161/00050458/0/";
-    val uri = "https://www.navitime.co.jp/diagram/bus/00136821/00031734/0/";
+    //val uri = "https://www.navitime.co.jp/diagram/bus/00136821/00031734/0/";
     //val uri = https://www.navitime.co.jp/diagram/bus/00018776/00005312/0/
+    val uri = args(0)
     //val outputPath = Path("./" + uri.split("/")(5) + ".csv")
     //outputPath.write("")
 
@@ -18,9 +25,11 @@ object main {
 
     // TODO: 平日，休日や上り，下りをどうするか考える
     // 平日は0，土曜は1，日曜は2
-    val date = 1
+    //val date = 1
+    val date = args(1)
     // 順方向は0，逆方面は1
-    val dir = 0
+    //val dir = 0
+    val dir = args(2)
     val divEleStr = "d_" + dir.toString + "_" + date.toString
     val divEle = doc.getElementById(divEleStr)
     val dlEleStr = "dl_" + date.toString
