@@ -37,12 +37,12 @@ object main {
     val dlEles = divEle.children
     // ～時台，ごとに切り出す
     val nameTimeTupleListListBuf = for (dlEle <- dlEles if dlEle.className == dlEleStr) yield {
-      //println(dlEle.text)
+      println(dlEle.text)
       val liEles = dlEle.child(1).child(0).children
       // 時刻1つ，ごとに切り出す
       val nameTimeTupleListBuf = for (liEle <- liEles) yield {
         val uri = "https:" + liEle.child(0).attr("href")
-        //println(uri)
+        println(uri)
         getOnePage(uri, "")
       }
       nameTimeTupleListBuf.toList
@@ -214,11 +214,11 @@ object main {
 
     val doc = Jsoup.connect(uri).get
 
-    val divEle = doc.getElementById("stoplist-matrix")
-    val tableEles = divEle.children
+    val divEle = doc.getElementsByClass("stops-area")
+    val tableEles = divEle(0).children
 
     val nameTimeTupleBuf = for (tableEle <- tableEles) yield {
-      val name = tableEle.getElementsByClass("name").text
+      val name = tableEle.getElementsByClass("station-name").text
       val time = tableEle.getElementsByClass("time").text.replace("発", "").replace("着", "")
       //println(name + "," + time)
       (name, time)
