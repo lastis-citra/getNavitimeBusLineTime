@@ -4,12 +4,12 @@ import scala.annotation.tailrec
 import scala.jdk.CollectionConverters._
 //import scalax.file.Path
 
-/**
- * arg0: URL
- * arg1: 平日は0，土曜は1，日曜は2
- * arg2: 順方向は0，逆方面は1
- * sbt run https://www.navitime.co.jp/diagram/bus/00136821/00031734/0/ 1 0
- **/
+/** arg0: URL
+  * arg1: 平日は0，土曜は1，日曜は2
+  * arg2: 順方向は0，逆方面は1
+  * sbt run https://www.navitime.co.jp/diagram/bus/00136821/00031734/0/ 1 0
+  * console, sbt shellともうまく動かないので設定で引数を指定してmainを実行すること
+  */
 object main {
   def main(args: Array[String]) {
     //val uri = "https://www.navitime.co.jp/diagram/bus/00257161/00050458/0/";
@@ -34,17 +34,18 @@ object main {
 
     val dlEles = divEle.children
     // ～時台，ごとに切り出す
-    val nameTimeTupleListListBuf = for (dlEle <- dlEles.asScala if dlEle.className == dlEleStr) yield {
-      println(dlEle.text)
-      val liEles = dlEle.child(1).child(0).children
-      // 時刻1つ，ごとに切り出す
-      val nameTimeTupleListBuf = for (liEle <- liEles.asScala) yield {
-        val uri = "https:" + liEle.child(0).attr("href")
-        println(uri)
-        getOnePage(uri, "")
+    val nameTimeTupleListListBuf =
+      for (dlEle <- dlEles.asScala if dlEle.className == dlEleStr) yield {
+        println(dlEle.text)
+        val liEles = dlEle.child(1).child(0).children
+        // 時刻1つ，ごとに切り出す
+        val nameTimeTupleListBuf = for (liEle <- liEles.asScala) yield {
+          val uri = "https://www.navitime.co.jp" + liEle.child(0).attr("href")
+          println(uri)
+          getOnePage(uri, "")
+        }
+        nameTimeTupleListBuf.toList
       }
-      nameTimeTupleListBuf.toList
-    }
     // このテーブルに含まれるすべてのバスの停車駅と時刻の組を取得
     val nameTimeTable = nameTimeTupleListListBuf.flatten.toSeq
     //println("All: " + nameTimeTable.size)
@@ -101,7 +102,8 @@ object main {
       // バス停名の（福井県）や〔東福バス〕などを削除する
       // （も）も含まない0文字以上の文字列を（）で囲んだ文字列にマッチする正規表現
       // 〔〕も同様の処理
-      val rename = nameTuple._1.replaceFirst("（[^（）]*）$", "").replaceFirst("〔[^〔〕]*〕$", "")
+      val rename =
+        nameTuple._1.replaceFirst("（[^（）]*）$", "").replaceFirst("〔[^〔〕]*〕$", "")
       if (nameTuple._2 != "") {
         print(rename + "," + rename + ",")
       } else {
@@ -130,23 +132,30 @@ object main {
   }
 
   // 最も停車駅が多いものを初期のリストにする
-  def createFirstNameSeq(nameTimeTable: Seq[Seq[(String, String)]]): Seq[String] = {
+  def createFirstNameSeq(
+      nameTimeTable: Seq[Seq[(String, String)]]
+  ): Seq[String] = {
     val sizeSeq = for (nameTimeSeq <- nameTimeTable) yield {
       nameTimeSeq.size
     }
     val maxSize = sizeSeq.max
 
-    val maxSizeNameSeq = for (nameTimeSeq <- nameTimeTable if nameTimeSeq.size == maxSize) yield {
-      for (nameTime <- nameTimeSeq) yield {
-        nameTime._1
+    val maxSizeNameSeq =
+      for (nameTimeSeq <- nameTimeTable if nameTimeSeq.size == maxSize) yield {
+        for (nameTime <- nameTimeSeq) yield {
+          nameTime._1
+        }
       }
-    }
     maxSizeNameSeq.head
   }
 
   // 全リストから，次に比較するリストを取り出す
   @tailrec
-  def createNameSeq(oldNameSeq: Seq[String], checkPoint: Int, nameTimeTable: Seq[Seq[(String, String)]]): Seq[String] = {
+  def createNameSeq(
+      oldNameSeq: Seq[String],
+      checkPoint: Int,
+      nameTimeTable: Seq[Seq[(String, String)]]
+  ): Seq[String] = {
     //println(checkPoint)
 
     val checkNameTimeSeq = nameTimeTable(checkPoint)
@@ -164,7 +173,11 @@ object main {
   // 古いリストと新しいリストを比較する
   // 古いリストにない駅があった場合は，その駅を間に挿入し，新しいリストとして返す
   @tailrec
-  def createNameSeqOne(oldNameSeq: Seq[String], checkPoint: Int, checkNameSeq: Seq[String]): Seq[String] = {
+  def createNameSeqOne(
+      oldNameSeq: Seq[String],
+      checkPoint: Int,
+      checkNameSeq: Seq[String]
+  ): Seq[String] = {
     val checkName = checkNameSeq(checkPoint)
     val newNameSeq = if (!oldNameSeq.contains(checkName)) {
       //println(checkName)
@@ -201,11 +214,19 @@ object main {
   // 着発の両方が設定されているバス停は("着", "発")を返す
   // 最後のバス停は("着", "")を返す
   // それ以外のバス停は("発", "")を返す
-  def checkStrEnd(i: Int, timeSeqSeq: Seq[Seq[(String, String)]]): (String, String) = {
+  def checkStrEnd(
+      i: Int,
+      timeSeqSeq: Seq[Seq[(String, String)]]
+  ): (String, String) = {
     // 検索用に2番目に時刻が入っていればtrue，それ以外はfalseが入ったSeqを作っておく
-    val checkStrSeq = for (timeSeq <- timeSeqSeq) yield { if (timeSeq(i)._2 != "") { true } else { false } }
-    if (checkStrSeq.contains(true)) { ("着", "発") } else {
-      if (i == timeSeqSeq.head.size - 1) { ("着", "") } else { ("発", "") }
+    val checkStrSeq = for (timeSeq <- timeSeqSeq) yield {
+      if (timeSeq(i)._2 != "") { true }
+      else { false }
+    }
+    if (checkStrSeq.contains(true)) { ("着", "発") }
+    else {
+      if (i == timeSeqSeq.head.size - 1) { ("着", "") }
+      else { ("発", "") }
     }
   }
 
@@ -219,7 +240,11 @@ object main {
 
     val nameTimeTupleBuf = for (tableEle <- tableEles.asScala) yield {
       val name = tableEle.getElementsByClass("station-name").text
-      val time = tableEle.getElementsByClass("time").text.replace("発", "").replace("着", "")
+      val time = tableEle
+        .getElementsByClass("time")
+        .text
+        .replace("発", "")
+        .replace("着", "")
       //println(name + "," + time)
       (name, time)
     }
