@@ -240,12 +240,20 @@ object main {
 
     val nameTimeTupleBuf = for (tableEle <- tableEles.asScala) yield {
       val name = tableEle.getElementsByClass("station-name").text
-      val time = tableEle
-        .getElementsByClass("time")
-        .text
-        .replace("発", "")
-        .replace("着", "")
-      //println(name + "," + time)
+      val time =
+        if (tableEle.getElementsByClass("time").size() > 0)
+          tableEle
+            .getElementsByClass("time")
+            .text
+            .replace("発", "")
+            .replace("着", "")
+        else
+          tableEle
+            .getElementsByClass("from-to-time")
+            .text
+            .replace("発", "")
+            .replace("着", "")
+      println(name + "," + time)
       (name, time)
     }
     nameTimeTupleBuf.toSeq
